@@ -35,32 +35,23 @@ def load_cats_data():
     df = pickle.load(open("preprocessed/cats.p", "rb"))
     return df
 
+def save_inputs_and_targets(df):
+    X = df['img_path']
+    y = []
+    for sample in df['annotation_path']:
+        # Read the annotation file
+        f = open(sample)
+        points = f.read().split(' ')
+        points = [int(x) for x in points if x != '']
+        y.append(points[1:])
+        f.close()
+    pickle.dump(X, open("preprocessed/inputs.p", "wb"))
+    pickle.dump(y, open("preprocessed/targets.p", "wb"))
+    return X,y
+
+
 if __name__=="__main__":
     # Define some Paths
     input_path = 'D:\proj\SnapCat\data\/raw'
     df = load_cats_data()
-    f, ax = plt.subplots(3, 2, figsize=(20, 15))
-
-    # Get six random samples
-    samples = df.sample(6).reset_index(drop=True)
-
-    for i, sample in enumerate(samples.values):
-        # Get the image path
-        sample_img = df['img_path'][i]
-        # Get the annotation path
-        sample_annot = df['annotation_path'][i]
-        # Read the annotation file
-        f = open(sample_annot)
-        points = f.read().split(' ')
-        points = [int(x) for x in points if x != '']
-        # Get the list of x and y coordinates
-        xpoints = points[1:19:2]
-        ypoints = points[2:19:2]
-        # close the file
-        f.close()
-
-        ax[i // 2, i % 2].imshow(imread(sample_img))
-        ax[i // 2, i % 2].axis('off')
-        ax[i // 2, i % 2].scatter(xpoints, ypoints, c='g')
-
-    plt.show()
+    save_inputs_and_targets(df)
