@@ -1,14 +1,11 @@
 import os
-import cv2
-import glob
 import numpy as np # linear algebra
 import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
 from pathlib import Path
-import matplotlib.pyplot as plt
-from skimage.io import imread, imshow, imsave
-import pickle
 
+import pickle
 np.random.seed(111)
+
 
 def raw_to_data_frame(input_path):
     cats = os.listdir(input_path)
@@ -31,9 +28,11 @@ def raw_to_data_frame(input_path):
     print("Total number of samples in the dataset: ", len(df))
     return df
 
+
 def load_cats_data():
     df = pickle.load(open("preprocessed/cats.p", "rb"))
     return df
+
 
 def save_inputs_and_targets(df):
     X = df['img_path']
@@ -52,6 +51,7 @@ def save_inputs_and_targets(df):
 
 if __name__=="__main__":
     # Define some Paths
-    input_path = 'D:\proj\SnapCat\data\/raw'
-    df = load_cats_data()
+    input_path = '/home/ddinu/PycharmProjects/SnapCat/data/raw/cats'
+    df = raw_to_data_frame(input_path)
+    # df = load_cats_data()
     save_inputs_and_targets(df)
