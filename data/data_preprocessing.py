@@ -2,6 +2,7 @@ import os
 import numpy as np # linear algebra
 import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
 from pathlib import Path
+from sklearn.preprocessing.data import StandardScaler
 
 import pickle
 np.random.seed(111)
@@ -10,6 +11,7 @@ np.random.seed(111)
 def raw_to_data_frame(input_path):
     cats = os.listdir(input_path)
     print("Total number of sub-directories found: ", len(cats))
+
     # Store the meta-data in a dataframe for convinience
     data = []
     for folder in cats:
@@ -37,6 +39,7 @@ def load_cats_data():
 def save_inputs_and_targets(df):
     X = df['img_path']
     y = []
+    scaler = StandardScaler()
     for sample in df['annotation_path']:
         # Read the annotation file
         f = open(sample)
@@ -44,6 +47,8 @@ def save_inputs_and_targets(df):
         points = [int(x) for x in points if x != '']
         y.append(points[1:])
         f.close()
+    # y = scaler.fit_transform(y)
+    # pickle.dump(scaler, open("preprocessed/scaler.p", "wb"))
     pickle.dump(X, open("preprocessed/inputs.p", "wb"))
     pickle.dump(y, open("preprocessed/targets.p", "wb"))
     return X,y
@@ -51,7 +56,7 @@ def save_inputs_and_targets(df):
 
 if __name__=="__main__":
     # Define some Paths
-    input_path = '/home/ddinu/PycharmProjects/SnapCat/data/raw/cats'
+    input_path = 'D:\proj\SnapCat\data\/raw'
     df = raw_to_data_frame(input_path)
     # df = load_cats_data()
     save_inputs_and_targets(df)
